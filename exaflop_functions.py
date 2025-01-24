@@ -34,7 +34,7 @@ def initialize_model(pretrained_model: str = "tencent/Hunyuan3D-2", device_str: 
 
 
 def process_images(
-    images: List[Union[Image.Image, str]],
+    images: Union[str, List[str], Image.Image],
     output_path: str = "output.glb",
     return_glb: bool = False
 ):
@@ -52,25 +52,16 @@ def process_images(
     if model is None:
         raise RuntimeError("Model is not initialized. Please call `initialize_model` first.")
 
-    # Load and preprocess images
-    preprocessed_images = []
-    for img in images:
-        if isinstance(img, str):
-            img = Image.open(img)
-        preprocessed_images.append(img)
+    print(f"Processing images into a 3D model...")
+    mesh = model(image=images)[0]
 
-    # Process each image through the pipeline
-    glb_data = None
-    for image in preprocessed_images:
-        print(f"Processing image {image} into a 3D model...")
-        mesh = model(image=image)[0]
-
-        # Save or collect GLB
-        mesh.export(output_path)
+    # Save or collect GLB
+    mesh.export(output_path)
 
 if __name__ == "__main__":
     # Initialize the model
     initialize_model()
 
     # Process images
-    process_images(["assets/demo.png"], output_path="output.glb")
+    process_images("/workspace/Hunyuan3D-2/hy3dgen/front.png", output_path="output_front.glb")
+    process_images(["/workspace/Hunyuan3D-2/hy3dgen/side.png", "/workspace/Hunyuan3D-2/hy3dgen/front.png", "/workspace/Hunyuan3D-2/hy3dgen/back.png", "/workspace/Hunyuan3D-2/side_2.png"], output_path="output_all_views.glb")
