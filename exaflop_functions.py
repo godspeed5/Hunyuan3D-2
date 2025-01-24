@@ -42,7 +42,7 @@ def process_images(
     Converts a list of images into a 3D model and saves it as a GLB file.
 
     Parameters:
-        images (List[Union[Image.Image, str]]): A list of input images or file paths.
+        images (List[Union[Image.Image, str]]): A list of input images or file paths. Currently supports only 1 image. Extend to multiple views later
         output_path (str): The file path to save the resulting GLB file.
         return_glb (bool): If True, returns the GLB binary data instead of saving to file.
 
@@ -66,11 +66,11 @@ def process_images(
         mesh = model(image=image)[0]
 
         # Save or collect GLB
-        glb_data = mesh.export_to_glb()
-        if not return_glb:
-            with open(output_path, "wb") as f:
-                f.write(glb_data)
-            print(f"3D model saved to {output_path}.")
-    
-    if return_glb:
-        return glb_data
+        mesh.export(output_path)
+
+if __name__ == "__main__":
+    # Initialize the model
+    initialize_model()
+
+    # Process images
+    process_images(["assets/demo.png"], output_path="output.glb")
